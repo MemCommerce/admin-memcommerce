@@ -1,11 +1,16 @@
-import { Button } from "@/components/ui/button"
+import { Routes, Route } from "react-router";
 
-function App() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <Button>Click me</Button>
-    </div>
-  )
+import Dashboard from "./pages/DashboardPage";
+import Colors from "./pages/ColorsPage";
+
+export default function App() {
+    return (
+        <Routes>
+            <Route path="/" element={<Dashboard />} />
+            {/* <Route path="products" element={<Products />} /> */}
+            <Route path="colors" element={<Colors />} />
+            {/* <Route path="sizes" element={<Sizes />} />
+          <Route path="orders" element={<Orders />} /> */}
+        </Routes>
+    );
 }
-
-export default App
