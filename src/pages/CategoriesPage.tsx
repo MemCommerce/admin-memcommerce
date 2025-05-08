@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, CategoryData } from "@/lib/types";
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react";
-import { postCategory } from "@/api/categoriesApi";
+import { getCategories, postCategory } from "@/api/categoriesApi";
 import { toast } from "sonner";
 
 const defaultCategoryData: CategoryData = {
@@ -24,6 +24,13 @@ const CategoriesPage = () => {
     const [editCategory, setEditCategory] = useState<Category | null>(null);
     const [newCategoryData, setNewCategoryData] = useState<CategoryData>(defaultCategoryData);
     const [isAdding, setIsAdding] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            const data = await getCategories()
+            setCategories(data)
+        })()
+    }, [])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

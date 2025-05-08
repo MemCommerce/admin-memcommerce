@@ -12,3 +12,9 @@ export const postCategory = async (categoryData: CategoryData): Promise<Category
     const data: Category = await resp.json();
     return data;
 };
+
+export const getCategories = async (): Promise<Category[]> => {
+    const resp = await fetch(CATEGORIES_URL)
+    const data: Category[] = await resp.json()
+    return data;
+}
