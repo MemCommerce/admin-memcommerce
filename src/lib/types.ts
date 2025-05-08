@@ -31,3 +31,16 @@ export type SizeData = SizeBase
 export type Size = SizeBase & {
     id: string;
 }
+
+type ProductBase = {
+    name: string;
+    brand: string;
+    description: string;
+    category_id: string;
+}
+
+export type ProductData = ProductBase
+
+export type Product = ProductBase & {
+    id: string;
+}
