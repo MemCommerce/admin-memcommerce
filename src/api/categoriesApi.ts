@@ -18,3 +18,13 @@ export const getCategories = async (): Promise<Category[]> => {
     const data: Category[] = await resp.json()
     return data;
 }
+
+export const deleteCategory = async (id: string) => {
+    const URL = `${CATEGORIES_URL}${id}`
+    const resp = await fetch(URL, {
+        method: "DELETE"
+    })
+    if (!resp.ok) {
+        throw new Error()
+    }
+}

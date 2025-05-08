@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, CategoryData } from "@/lib/types";
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react";
-import { getCategories, postCategory } from "@/api/categoriesApi";
+import { deleteCategory, getCategories, postCategory } from "@/api/categoriesApi";
 import { toast } from "sonner";
 
 const defaultCategoryData: CategoryData = {
@@ -56,7 +56,15 @@ const CategoriesPage = () => {
 
     const openEditDialog = (size: any) => {};
 
-    const handleDeleteCategory = (id: string) => {};
+    const handleDeleteCategory = async (id: string) => {
+        try {
+            await deleteCategory(id)
+            const newState = categories.filter((c) => c.id !== id)
+            setCategories(newState)
+        } catch {
+            toast("Error during delete category!")
+        }
+    };
 
     const handleEditCategory = () => {};
 
