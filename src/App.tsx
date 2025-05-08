@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import ProductVariants from "./pages/ProductVariantsPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import Sizes from "./pages/SizesPage";
+import { Toaster } from "./components/ui/sonner";
 
 export default function App() {
     return (
@@ -21,6 +22,7 @@ export default function App() {
                     <Route path="colors" element={<Colors />} />
                     <Route path="sizes" element={<Sizes />} />
                 </Routes>
+                <Toaster />
             </main>
         </BrowserRouter>
     );

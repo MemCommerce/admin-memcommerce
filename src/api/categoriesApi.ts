@@ -1,0 +1,14 @@
+import type { Category, CategoryData } from "@/lib/types";
+import { CATEGORIES_URL } from "@/lib/urls";
+
+export const postCategory = async (categoryData: CategoryData): Promise<Category> => {
+    const resp = await fetch(CATEGORIES_URL, {
+        method: "POST",
+        body: JSON.stringify(categoryData),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    const data: Category = await resp.json();
+    return data;
+};

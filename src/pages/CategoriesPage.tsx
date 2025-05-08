@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -7,16 +7,45 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import type { Category } from "@/lib/types";
+import type { Category, CategoryData } from "@/lib/types";
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react";
+import { postCategory } from "@/api/categoriesApi";
+import { toast } from "sonner";
+
+const defaultCategoryData: CategoryData = {
+    name: "",
+    description: "",
+};
 
 const CategoriesPage = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editCategory, setEditCategory] = useState<Category | null>(null);
+    const [newCategoryData, setNewCategoryData] = useState<CategoryData>(defaultCategoryData);
+    const [isAdding, setIsAdding] = useState(false);
 
-    const handleAddCategory = () => {};
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setNewCategoryData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAddCategory = async (e: FormEvent) => {
+        e.preventDefault();
+        setIsAdding(true);
+
+        try {
+            const newCat = await postCategory(newCategoryData);
+            setCategories((prev) => [...prev, newCat]);
+            setNewCategoryData(defaultCategoryData);
+            setIsAddDialogOpen(false);
+        } catch (error) {
+            console.error("Failed to add category:", error);
+            toast("Failed to add category!")
+        } finally {
+            setIsAdding(false);
+        }
+    };
 
     const openEditDialog = (size: any) => {};
 
@@ -39,7 +68,7 @@ const CategoriesPage = () => {
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
-                        <form action={handleAddCategory}>
+                        <form onSubmit={handleAddCategory}>
                             <DialogHeader>
                                 <DialogTitle>Add New Category</DialogTitle>
                                 <DialogDescription>Add a new product category.</DialogDescription>
@@ -48,19 +77,21 @@ const CategoriesPage = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="name">Category Name</Label>
-                                        <Input id="name" name="name" placeholder="Size name" required />
+                                        <Input id="name" name="name" value={newCategoryData.name} onChange={handleInputChange} required />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="description">Description</Label>
-                                    <Textarea id="description" name="description" placeholder="Size description" />
+                                    <Textarea id="description" name="description" value={newCategoryData.description} onChange={handleInputChange} />
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={isAdding}>
                                     Cancel
                                 </Button>
-                                <Button type="submit">Add Category</Button>
+                                <Button type="submit" disabled={isAdding}>
+                                    {isAdding ? "Adding..." : "Add Category"}
+                                </Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -123,7 +154,6 @@ const CategoriesPage = () => {
                                         <Label htmlFor="edit-name">Category Name</Label>
                                         <Input id="edit-name" name="name" defaultValue={editCategory.name} required />
                                     </div>
-                                   
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="edit-description">Description</Label>
