@@ -21,3 +21,13 @@ export type ColorData = ColorBase;
 export type Color = ColorBase & {
     id: string;
 };
+
+type SizeBase = {
+    label: string;
+}
+
+export type SizeData = SizeBase
+
+export type Size = SizeBase & {
+    id: string;
+}
