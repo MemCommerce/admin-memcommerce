@@ -186,7 +186,7 @@ export default function Products() {
                                 <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                                     Cancel
                                 </Button>
-                                <Button type="submit">Save Product</Button>
+                                <Button type="submit" disabled={isAdding}>{isAdding ? "Saving..." : "Save Product"}</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>

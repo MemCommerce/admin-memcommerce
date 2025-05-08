@@ -44,3 +44,16 @@ export type ProductData = ProductBase
 export type Product = ProductBase & {
     id: string;
 }
+
+type ProductVariantBase = {
+    product_id: string;
+    color_id: string;
+    size_id: string;
+    price: number;
+}
+
+export type ProductVariantData = ProductVariantBase
+
+export type ProductVariant = ProductVariantBase & {
+    id: string;
+}
