@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useLocation } from "react-router"
-import { Menu, Bell, X, LayoutDashboard, Package, Palette, Ruler, ShoppingCart, ListFilter, FolderTree } from "lucide-react"
+import { Menu, Bell, X, LayoutDashboard, Package, Palette, Ruler, ShoppingCart, ListFilter, FolderTree, BotIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,6 +14,7 @@ const navigation = [
   { name: "Colors", href: "/colors", icon: Palette },
   { name: "Sizes", href: "/sizes", icon: Ruler },
   { name: "Orders", href: "/orders", icon: ShoppingCart },
+  { name: "AI Admin", href: "/ai-admin", icon: BotIcon },
 ]
 
 export default function Header() {

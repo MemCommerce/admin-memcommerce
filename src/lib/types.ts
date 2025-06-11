@@ -57,3 +57,10 @@ export type ProductVariantData = ProductVariantBase
 export type ProductVariant = ProductVariantBase & {
     id: string;
 }
+
+type MessageBase = {
+    role: string,
+    content: string,
+}
+
+export type MessageData = MessageBase
