@@ -64,3 +64,12 @@ type MessageBase = {
 }
 
 export type MessageData = MessageBase
+
+type MessageResponse = {
+    content: string
+}
+
+export type ChatResponse = {
+    conversation_id: string,
+    messages: MessageResponse[]
+}

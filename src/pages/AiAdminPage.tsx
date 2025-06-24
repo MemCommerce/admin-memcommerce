@@ -1,6 +1,6 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { Fragment, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Bot, Loader2, Send, User } from "lucide-react";
-import { postChatMessages } from "@/api/aiChatApi";
+import { postChatMessage } from "@/api/aiChatApi";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import type { MessageData } from "@/lib/types";
 const AiAdminPage = () => {
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null)
   const scrollAreaRef = useRef(null);
   const [input, setInput] = useState("")
 
@@ -28,7 +29,15 @@ const AiAdminPage = () => {
     setMessages((prev) => [...prev, userMessage])
     setIsLoading(true)
     setInput("")
-    const assistantMessage = await postChatMessages([...messages, userMessage])
+    const chatResponse = await postChatMessage(userMessage, conversationId)
+    if (!conversationId) {
+      setConversationId(chatResponse.conversation_id)
+    }
+    const newMessage = chatResponse.messages[0].content
+    const assistantMessage: MessageData = {
+      role: "assistant",
+      content: newMessage,
+    };
     setMessages((prev) => [...prev, assistantMessage])
     setIsLoading(false)
   }
@@ -36,7 +45,7 @@ const AiAdminPage = () => {
   return (
     <section className="min-h-screen p-4">
       <section className="max-w-5xl mx-auto">
-        <Card className="h-[80vh] flex flex-col shadow-xl">
+        <Card className="h-[80vh] flex flex-col shadow-xl overflow-y-auto">
           <CardHeader className="border-b bg-white/50 backdrop-blur-sm">
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Bot className="h-8 w-8 text-blue-600" />
@@ -77,7 +86,14 @@ const AiAdminPage = () => {
                           message.role === "user" ? "bg-blue-600 text-white" : "bg-white border shadow-sm"
                         }`}
                       >
-                        <span key={`${message.id}`}>{message.content}</span>
+                        <span key={`${message.id}`}>
+                          {message.content.split('\n').map((line, index) => (
+                            <span key={index}>
+                              {line}
+                              {index < message.content.split('\n').length - 1 && <br />}
+                            </span>
+                          ))}
+                        </span>
                       </div>
 
                       {message.role === "user" && (
