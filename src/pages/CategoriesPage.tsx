@@ -81,7 +81,10 @@ const CategoriesPage = () => {
     }
   };
 
-  const openEditDialog = (size: any) => {};
+  const openEditDialog = (category: Category) => {
+    console.log(category)
+    setEditCategory(category)
+  };
 
   const handleDeleteCategory = async (id: string) => {
     try {

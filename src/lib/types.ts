@@ -1,75 +1,77 @@
 export type Theme = "light" | "dark";
 
 type CategoryBase = {
-    name: string;
-    description: string;
+  name: string;
+  description: string;
 };
 
 export type CategoryData = CategoryBase;
 
 export type Category = CategoryBase & {
-    id: string;
+  id: string;
 };
 
 type ColorBase = {
-    name: string;
-    hex: string;
+  name: string;
+  hex: string;
 };
 
 export type ColorData = ColorBase;
 
 export type Color = ColorBase & {
-    id: string;
+  id: string;
 };
 
 type SizeBase = {
-    label: string;
-}
+  label: string;
+};
 
-export type SizeData = SizeBase
+export type SizeData = SizeBase;
 
 export type Size = SizeBase & {
-    id: string;
-}
+  id: string;
+};
 
 type ProductBase = {
-    name: string;
-    brand: string;
-    description: string;
-    category_id: string;
-}
+  name: string;
+  brand: string;
+  description: string;
+  category_id: string;
+};
 
-export type ProductData = ProductBase
+export type ProductData = ProductBase;
 
 export type Product = ProductBase & {
-    id: string;
-}
+  id: string;
+};
 
 type ProductVariantBase = {
-    product_id: string;
-    color_id: string;
-    size_id: string;
-    price: number;
-}
+  product_id: string;
+  color_id: string;
+  size_id: string;
+  price: number;
+};
 
-export type ProductVariantData = ProductVariantBase
+export type ProductVariantData = ProductVariantBase & {
+  image: string;
+};
 
 export type ProductVariant = ProductVariantBase & {
-    id: string;
-}
+  id: string;
+};
 
 type MessageBase = {
-    role: string,
-    content: string,
-}
+  role: string;
+  content: string;
+};
 
 export type MessageData = MessageBase
 
 type MessageResponse = {
-    content: string
-}
+  content: string;
+};
 
 export type ChatResponse = {
-    conversation_id: string,
-    messages: MessageResponse[]
-}
+  conversation_id: string;
+  messages: MessageResponse[];
+};

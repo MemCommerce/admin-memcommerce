@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Bot, Loader2, Send, User } from "lucide-react";
 import { postChatMessage } from "@/api/aiChatApi";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
