@@ -53,11 +53,12 @@ type ProductVariantBase = {
 };
 
 export type ProductVariantData = ProductVariantBase & {
-  image: string;
+  image: string | null;
 };
 
 export type ProductVariant = ProductVariantBase & {
   id: string;
+  image_url: string | null;
 };
 
 type MessageBase = {

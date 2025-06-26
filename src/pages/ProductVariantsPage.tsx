@@ -243,6 +243,7 @@ const ProductVariantPage = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Product</TableHead>
+              <TableHead>Image</TableHead>
               <TableHead>Color</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Price</TableHead>
@@ -254,6 +255,13 @@ const ProductVariantPage = () => {
               {productVariants.map((pv) => (
                 <TableRow key={pv.id}>
                   <TableCell className="font-medium">{products.find((p) => p.id === pv.product_id)?.name}</TableCell>
+                  <TableCell>
+                    {pv.image_url ? (
+                      <img  src={pv.image_url} alt="" className="w-[50px] h-[50px] object-cover rounded border"/>
+                    ) : (
+                      "No image"
+                    )}
+                  </TableCell>
                   <TableCell>{colors.find((c) => c.id === pv.color_id)?.name}</TableCell>
                   <TableCell>{sizes.find((s) => s.id === pv.size_id)?.label}</TableCell>
                   <TableCell>{pv.price}</TableCell>
