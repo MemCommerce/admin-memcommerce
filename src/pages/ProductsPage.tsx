@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Plus, Search, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Pencil, Trash, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -102,6 +102,10 @@ export default function Products() {
         setIsEditDialogOpen(true);
     };
 
+    const handleAiGen = () => {
+        
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -180,6 +184,10 @@ export default function Products() {
                                         value={newProductData.description}
                                         onChange={handleChange}
                                     />
+                                    <Button type="button" variant="outline" disabled={isAdding} onClick={handleAiGen}>
+                                        <Bot />
+                                        Generate with AI
+                                    </Button>
                                 </div>
                             </div>
                             <DialogFooter>
