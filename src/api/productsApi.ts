@@ -28,3 +28,15 @@ export const deleteProduct = async (id: string) => {
         throw Error();
     }
 };
+
+export const editProduct = async (product: Product): Promise<Product> => {
+    const resp = await fetch(PRODUCTS_URL, {
+        method: "PUT",
+        body: JSON.stringify(product),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    const data: Product = await resp.json()
+    return data
+}

@@ -13,7 +13,7 @@ import { DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, Product, ProductData } from "@/lib/types";
-import { deleteProduct, getProducts, postProduct } from "@/api/productsApi";
+import { deleteProduct, editProduct, getProducts, postProduct } from "@/api/productsApi";
 import { getCategories } from "@/api/categoriesApi";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -80,7 +80,22 @@ export default function Products() {
     }
   };
 
-  const handleEditProduct = async (e: FormEvent) => {};
+  const handleEditProduct = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setIsAdding(true)
+
+    try {
+      const newProduct = await editProduct(currentProduct!);
+      setProducts((prev) => [...prev, newProduct]);
+      setIsEditDialogOpen(false);
+      setCurrentProduct(null);
+    } catch {
+      toast("Something happened during editing of product!");
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const handleDeleteProduct = async (id: string) => {
     try {
