@@ -83,11 +83,17 @@ export default function Products() {
   const handleEditProduct = async (e: FormEvent) => {
     e.preventDefault();
 
-    setIsAdding(true)
+    setIsAdding(true);
 
     try {
-      const newProduct = await editProduct(currentProduct!);
-      setProducts((prev) => [...prev, newProduct]);
+      const updatedProduct = await editProduct(currentProduct!);
+      const newProductsState = products.map((p) => {
+        if (p.id === updatedProduct.id) {
+          return updatedProduct
+        }
+        return p
+      })
+      setProducts(newProductsState);
       setIsEditDialogOpen(false);
       setCurrentProduct(null);
     } catch {
@@ -259,78 +265,80 @@ export default function Products() {
         </Table>
       </div>
 
-      <DialogComponent
-        title="Edit product"
-        description="Update the product details. Click save when you're done."
-        isDialogOpen={isEditDialogOpen}
-        setIsDialogOpen={setIsAddDialogOpen}
-        onSubmit={handleEditProduct}
-      >
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+      {currentProduct && (
+        <DialogComponent
+          title="Edit product"
+          description="Update the product details. Click save when you're done."
+          isDialogOpen={isEditDialogOpen}
+          setIsDialogOpen={setIsEditDialogOpen}
+          onSubmit={handleEditProduct}
+        >
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Product name"
+                  required
+                  value={currentProduct.name}
+                  onChange={handleEditProductChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand</Label>
+                <Input
+                  id="brand"
+                  name="brand"
+                  placeholder="Brand"
+                  required
+                  value={currentProduct.brand}
+                  onChange={handleEditProductChange}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+
+                <Select
+                  value={currentProduct.category_id}
+                  onValueChange={(value) => setCurrentProduct((prev) => ({ ...prev!, category_id: value }))}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                placeholder="Product name"
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                placeholder="Product description"
                 required
-                value={currentProduct!.name}
+                value={currentProduct.description}
                 onChange={handleEditProductChange}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="brand">Brand</Label>
-              <Input
-                id="brand"
-                name="brand"
-                placeholder="Brand"
-                required
-                value={currentProduct!.brand}
-                onChange={handleEditProductChange}
-              />
+              <Button type="button" variant="outline" disabled={isAdding} onClick={handleAiGen}>
+                <Bot />
+                Generate with AI
+              </Button>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-
-              <Select
-                value={currentProduct!.category_id}
-                onValueChange={(value) => setCurrentProduct((prev) => ({ ...prev!, category_id: value }))}
-              >
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="Product description"
-              required
-              value={currentProduct!.description}
-              onChange={handleEditProductChange}
-            />
-            <Button type="button" variant="outline" disabled={isAdding} onClick={handleAiGen}>
-              <Bot />
-              Generate with AI
-            </Button>
-          </div>
-        </div>
-      </DialogComponent>
+        </DialogComponent>
+      )}
     </div>
   );
 }
