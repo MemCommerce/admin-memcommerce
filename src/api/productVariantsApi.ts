@@ -13,6 +13,18 @@ export const postPv = async (pvData: ProductVariantData): Promise<ProductVariant
     return data;
 };
 
+export const putPv = async (productVariant: ProductVariant): Promise<ProductVariant> => {
+    const resp = await fetch(PRODUCT_VARIANTS_URL, {
+        method: "PUT",
+        body: JSON.stringify(productVariant),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    const data: ProductVariant = await resp.json();
+    return data;
+};
+
 export const getPvs = async (): Promise<ProductVariant[]> => {
     const resp = await fetch(PRODUCT_VARIANTS_URL);
     const data: ProductVariant[] = await resp.json();

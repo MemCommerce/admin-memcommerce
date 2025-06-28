@@ -1,4 +1,4 @@
-import type { Theme } from "@/lib/types";
+import type { Color, Product, ProductVariant, ProductVariantData, Size, Theme } from "@/lib/types";
 import type { FormEvent, ReactNode } from "react";
 
 export interface ThemeContextType {
@@ -21,4 +21,12 @@ export interface DialogComponentProps {
   description: string;
   children: ReactNode;
   trigger?: ReactNode;
+}
+
+export interface ProductVariantFieldsProps<T extends ProductVariant | ProductVariantData> {
+  pvData: T;
+  setPvData: React.Dispatch<React.SetStateAction<T>>;
+  products: Product[];
+  colors: Color[];
+  sizes: Size[];
 }
