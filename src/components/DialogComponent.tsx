@@ -3,7 +3,16 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "./ui/button";
 import type { DialogComponentProps } from "@/lib/interfaces";
 
-const DialogComponent: FC<DialogComponentProps> = ({ trigger, isDialogOpen, setIsDialogOpen, onSubmit, title, description, children }) => {
+const DialogComponent: FC<DialogComponentProps> = ({
+  trigger,
+  isDialogOpen,
+  setIsDialogOpen,
+  onSubmit,
+  title,
+  description,
+  isLoading,
+  children,
+}) => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       {trigger}
@@ -17,10 +26,10 @@ const DialogComponent: FC<DialogComponentProps> = ({ trigger, isDialogOpen, setI
           {children}
 
           <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button type="button" variant="outline" disabled={isLoading} onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" disabled={isLoading}>Save Changes</Button>
           </DialogFooter>
         </form>
       </DialogContent>

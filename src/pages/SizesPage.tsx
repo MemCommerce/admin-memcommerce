@@ -1,13 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Plus, Search, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Size, SizeData } from "@/lib/types";
 import { deleteSize, getSizes, postSize } from "@/api/sizesApi";
 import { toast } from "sonner";
@@ -22,8 +20,8 @@ export default function Sizes() {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [currentSize, setCurrentSize] = useState<Size | null>(null);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    // const [searchTerm, setSearchTerm] = useState("");
+    // const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [newSizeData, setNewSizeData] = useState<SizeData>(defaultSize);
 
@@ -123,7 +121,7 @@ export default function Sizes() {
                                 <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                                     Cancel
                                 </Button>
-                                <Button type="submit">Add Size</Button>
+                                <Button type="submit" disabled={isLoading}>Add Size</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>

@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Bot, Loader2, Send, User } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 import { postChatMessage } from "@/api/aiChatApi";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,36 +12,38 @@ import type { MessageData } from "@/lib/types";
 const AiAdminPage = () => {
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [conversationId, setConversationId] = useState<string | null>(null)
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const scrollAreaRef = useRef(null);
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState("");
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setInput(value)
-  }
+    const value = e.target.value;
+    setInput(value);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const userMessage: MessageData = {
       role: "user",
-      content: input
-    }
-    setMessages((prev) => [...prev, userMessage])
-    setIsLoading(true)
-    setInput("")
-    const chatResponse = await postChatMessage(userMessage, conversationId)
+      content: input,
+      id: uuidv4(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+    setInput("");
+    const chatResponse = await postChatMessage(userMessage, conversationId);
     if (!conversationId) {
-      setConversationId(chatResponse.conversation_id)
+      setConversationId(chatResponse.conversation_id);
     }
-    const newMessage = chatResponse.messages[0].content
+    const newMessage = chatResponse.messages[0].content;
     const assistantMessage: MessageData = {
       role: "assistant",
       content: newMessage,
+      id: uuidv4(),
     };
-    setMessages((prev) => [...prev, assistantMessage])
-    setIsLoading(false)
-  }
+    setMessages((prev) => [...prev, assistantMessage]);
+    setIsLoading(false);
+  };
 
   return (
     <section className="min-h-screen p-4">
@@ -87,10 +90,10 @@ const AiAdminPage = () => {
                         }`}
                       >
                         <span key={`${message.id}`}>
-                          {message.content.split('\n').map((line, index) => (
+                          {message.content.split("\n").map((line, index) => (
                             <span key={index}>
                               {line}
-                              {index < message.content.split('\n').length - 1 && <br />}
+                              {index < message.content.split("\n").length - 1 && <br />}
                             </span>
                           ))}
                         </span>
@@ -124,7 +127,7 @@ const AiAdminPage = () => {
                 </div>
               )}
             </ScrollArea>
-            
+
             <div className="border-t bg-white/50 backdrop-blur-sm p-4">
               <form onSubmit={handleSubmit} className="flex gap-2">
                 <Input

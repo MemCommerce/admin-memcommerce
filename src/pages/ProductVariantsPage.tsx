@@ -33,7 +33,7 @@ const ProductVariantPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [sizes, setSizes] = useState<Size[]>([]);
   const [colors, setColors] = useState<Color[]>([]);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [productVariants, setProductVariants] = useState<ProductVariant[]>([]);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editProductVariant, setEdintProductVariant] = useState<ProductVariant | null>(null);
@@ -56,7 +56,7 @@ const ProductVariantPage = () => {
 
   const handleAddPV = async (e: FormEvent) => {
     e.preventDefault();
-    setIsAdding(true);
+    setIsLoading(true);
 
     try {
       const newProductVariant = await postPv(newPvData);
@@ -66,7 +66,7 @@ const ProductVariantPage = () => {
     } catch {
       toast("Error during creationg product variant!");
     } finally {
-      setIsAdding(false);
+      setIsLoading(false);
     }
   };
 
@@ -81,23 +81,23 @@ const ProductVariantPage = () => {
 
   const handleSaveEdit = async (e: FormEvent) => {
     e.preventDefault();
-    setIsAdding(true);
+    setIsLoading(true);
 
     try {
       const editedPv = await putPv(editProductVariant as ProductVariant);
       const newProductVariantsState = productVariants.map((pv) => {
         if (pv.id === editedPv.id) {
-          return editedPv
+          return editedPv;
         }
-        return pv
-      })
+        return pv;
+      });
       setProductVariants(newProductVariantsState);
       setIsEditDialogOpen(false);
       setEdintProductVariant(null);
     } catch {
       toast("Error during editing product variant!");
     } finally {
-      setIsAdding(false);
+      setIsLoading(false);
     }
   };
 
@@ -109,6 +109,7 @@ const ProductVariantPage = () => {
           <p className="text-muted-foreground">Manage product variants inventory</p>
         </article>
         <DialogComponent
+          isLoading={isLoading}
           title="Add New Product Variant"
           description="Fill in the details for the new product variant. Click save when you're done."
           onSubmit={handleAddPV}
@@ -188,6 +189,7 @@ const ProductVariantPage = () => {
       </div>
       {editProductVariant && (
         <DialogComponent
+          isLoading={isLoading}
           title="Edit Product Variant"
           description="Edit the details for the product variant."
           onSubmit={handleSaveEdit}

@@ -20,6 +20,7 @@ export interface DialogComponentProps {
   title: string;
   description: string;
   children: ReactNode;
+  isLoading: boolean;
   trigger?: ReactNode;
 }
 

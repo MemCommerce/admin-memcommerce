@@ -32,7 +32,7 @@ export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [newProductData, setNewProductData] = useState<ProductData>(defaultProduct);
@@ -66,7 +66,7 @@ export default function Products() {
 
   const handleAddProduct = async (e: FormEvent) => {
     e.preventDefault();
-    setIsAdding(true);
+    setIsLoading(true);
 
     try {
       const newProduct = await postProduct(newProductData);
@@ -76,14 +76,14 @@ export default function Products() {
     } catch {
       toast("Something happened during creation of product!");
     } finally {
-      setIsAdding(false);
+      setIsLoading(false);
     }
   };
 
   const handleEditProduct = async (e: FormEvent) => {
     e.preventDefault();
 
-    setIsAdding(true);
+    setIsLoading(true);
 
     try {
       const updatedProduct = await editProduct(currentProduct!);
@@ -99,7 +99,7 @@ export default function Products() {
     } catch {
       toast("Something happened during editing of product!");
     } finally {
-      setIsAdding(false);
+      setIsLoading(false);
     }
   };
 
@@ -127,6 +127,7 @@ export default function Products() {
           <p className="text-muted-foreground">Manage your product inventory</p>
         </div>
         <DialogComponent
+          isLoading={isLoading}
           isDialogOpen={isAddDialogOpen}
           setIsDialogOpen={setIsAddDialogOpen}
           onSubmit={handleAddProduct}
@@ -199,7 +200,7 @@ export default function Products() {
                 value={newProductData.description}
                 onChange={handleNewProductChange}
               />
-              <Button type="button" variant="outline" disabled={isAdding} onClick={handleAiGen}>
+              <Button type="button" variant="outline" disabled={isLoading} onClick={handleAiGen}>
                 <Bot />
                 Generate with AI
               </Button>
@@ -267,6 +268,7 @@ export default function Products() {
 
       {currentProduct && (
         <DialogComponent
+          isLoading={isLoading}
           title="Edit product"
           description="Update the product details. Click save when you're done."
           isDialogOpen={isEditDialogOpen}
@@ -331,7 +333,7 @@ export default function Products() {
                 value={currentProduct.description}
                 onChange={handleEditProductChange}
               />
-              <Button type="button" variant="outline" disabled={isAdding} onClick={handleAiGen}>
+              <Button type="button" variant="outline" disabled={isLoading} onClick={handleAiGen}>
                 <Bot />
                 Generate with AI
               </Button>

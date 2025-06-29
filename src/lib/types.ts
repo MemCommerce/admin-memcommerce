@@ -66,9 +66,12 @@ type MessageBase = {
   content: string;
 };
 
-export type MessageData = MessageBase
+export type MessageData = MessageBase & {
+  id: string
+}
 
 type MessageResponse = {
+  id: string;
   content: string;
 };
 
