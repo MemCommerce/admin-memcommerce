@@ -13,7 +13,7 @@ import { type ProductVariant, type Color, type Product, type ProductVariantData,
 import { getProducts } from "@/api/productsApi";
 import { getSizes } from "@/api/sizesApi";
 import { getColors } from "@/api/colorsApi";
-import { getPvs, postPv, putPv } from "@/api/productVariantsApi";
+import { deletePv, getPvs, postPv, putPv } from "@/api/productVariantsApi";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
 import DialogComponent from "@/components/DialogComponent";
@@ -70,8 +70,13 @@ const ProductVariantPage = () => {
     }
   };
 
-  const handleDeletePv = (id: string) => {
-    console.log(id);
+  const handleDeletePv = async (id: string) => {
+    try {
+      await deletePv(id)
+      setProductVariants(productVariants.filter((pv) => pv.id !== id))
+    } catch {
+      toast("Error during delete of product variant!")
+    }
   };
 
   const openEditDialog = (productVariant: ProductVariant) => {
