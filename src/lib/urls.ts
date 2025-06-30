@@ -1,7 +1,7 @@
-const API_URL = "http://127.0.0.1:8001";
+// const API_URL = "http://127.0.0.1:8001";
 // const ADMIN_AGENT_URL = "http://127.0.0.1:8002"
 
-// const API_URL = "https://be-memcommerce-667915768397.europe-west1.run.app";
+const API_URL = "https://be-memcommerce-667915768397.europe-west1.run.app";
 const ADMIN_AGENT_URL = "https://admin-agent-667915768397.europe-west1.run.app"
 
 export const CATEGORIES_URL = `${API_URL}/categories/`;
