@@ -67,8 +67,8 @@ type MessageBase = {
 };
 
 export type MessageData = MessageBase & {
-  id: string
-}
+  id: string;
+};
 
 type MessageResponse = {
   id: string;
@@ -78,4 +78,13 @@ type MessageResponse = {
 export type ChatResponse = {
   conversation_id: string;
   messages: MessageResponse[];
+};
+
+export type DescriptionReq = {
+  name: string;
+  brand: string;
+  category: string;
+  primary_keyword: string;
+  secondary_keywords: string[];
+  target_audience: string[];
 };
