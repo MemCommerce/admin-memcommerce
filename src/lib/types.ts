@@ -88,4 +88,13 @@ export type TempImageData = {
 export type TempImage = {
   name: string;
   url: string;
+}
+
+export type DescriptionReq = {
+  name: string;
+  brand: string;
+  category: string;
+  primary_keyword: string;
+  secondary_keywords: string[];
+  target_audience: string[];
 };
