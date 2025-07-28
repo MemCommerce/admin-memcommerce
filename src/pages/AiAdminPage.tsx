@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { MessageData } from "@/lib/types";
+import type { MessageData, TempImage, TempImageData } from "@/lib/types";
+import TempImagesPreview from "@/components/ImagePreviewContainer";
+import { postImages } from "@/api/imagesApi";
 
 const AiAdminPage = () => {
   const [messages, setMessages] = useState<MessageData[]>([]);
@@ -15,6 +17,7 @@ const AiAdminPage = () => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const scrollAreaRef = useRef(null);
   const [input, setInput] = useState("");
+  const [tempImages, setTempImages] = useState<TempImage[]>([]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -28,9 +31,14 @@ const AiAdminPage = () => {
       content: input,
       id: uuidv4(),
     };
+    if (tempImages.length > 0) {
+      console.log("Enter here")
+      userMessage.imagesUrls = tempImages.map((ti) => ti.url)
+    }
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
     setInput("");
+    setTempImages([])
     const chatResponse = await postChatMessage(userMessage, conversationId);
     if (!conversationId) {
       setConversationId(chatResponse.conversation_id);
@@ -43,6 +51,37 @@ const AiAdminPage = () => {
     };
     setMessages((prev) => [...prev, assistantMessage]);
     setIsLoading(false);
+  };
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const files = Array.from(e.target.files);
+
+    try {
+      const base64Images = await Promise.all(
+        files.map(
+          (file) =>
+            new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = () => reject(new Error("Failed to read file"));
+              reader.readAsDataURL(file);
+            })
+        )
+      );
+
+      const postData: TempImageData[] = base64Images.map((bi) => (
+        {base64_data: bi}
+      ))
+      const newImageUrls = await postImages(postData);
+
+      setTempImages((prev) => [...prev, ...newImageUrls]);
+    } catch (err) {
+      console.error("Bulk image upload failed", err);
+    }
+
+    e.target.value = "";
   };
 
   return (
@@ -82,6 +121,21 @@ const AiAdminPage = () => {
                             <Bot className="h-4 w-4 text-black" />
                           </AvatarFallback>
                         </Avatar>
+                      )}
+
+                      {/* Images Row */}
+                      {message.imagesUrls && message.imagesUrls?.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {message.imagesUrls.map((imgUrl: string, index: number) => (
+                            <div key={index} className="rounded-md overflow-hidden border w-24 h-24">
+                              <img
+                                src={imgUrl}
+                                alt={`image-${index}`}
+                                className="object-cover w-full h-full"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       )}
 
                       <div
@@ -128,8 +182,10 @@ const AiAdminPage = () => {
               )}
             </ScrollArea>
 
+            {tempImages && <TempImagesPreview tempImages={tempImages} onRemove={() => {}} />}
+
             <div className="border-t bg-white/50 backdrop-blur-sm p-4">
-              <form onSubmit={handleSubmit} className="flex gap-2">
+              <form onSubmit={handleSubmit} className="flex gap-2 items-center">
                 <Input
                   value={input}
                   onChange={handleInputChange}
@@ -138,6 +194,21 @@ const AiAdminPage = () => {
                   className="flex-1"
                   autoFocus
                 />
+
+                {/* Image Upload Button */}
+                <label className="relative cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    disabled={isLoading}
+                  />
+                  <Button type="button" variant="outline" className="px-2 py-1 h-10" disabled={isLoading}>
+                    📷
+                  </Button>
+                </label>
+
                 <Button
                   type="submit"
                   disabled={isLoading || !input.trim()}

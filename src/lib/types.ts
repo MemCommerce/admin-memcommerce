@@ -67,8 +67,9 @@ type MessageBase = {
 };
 
 export type MessageData = MessageBase & {
-  id: string
-}
+  id: string;
+  imagesUrls?: string[];
+};
 
 type MessageResponse = {
   id: string;
@@ -78,4 +79,13 @@ type MessageResponse = {
 export type ChatResponse = {
   conversation_id: string;
   messages: MessageResponse[];
+};
+
+export type TempImageData = {
+  base64_data: string;
+};
+
+export type TempImage = {
+  name: string;
+  url: string;
 };

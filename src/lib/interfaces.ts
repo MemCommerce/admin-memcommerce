@@ -1,4 +1,4 @@
-import type { Color, Product, ProductVariant, ProductVariantData, Size, Theme } from "@/lib/types";
+import type { Color, Product, ProductVariant, ProductVariantData, Size, Theme, TempImage } from "@/lib/types";
 import type { FormEvent, ReactNode } from "react";
 
 export interface ThemeContextType {
@@ -31,3 +31,8 @@ export interface ProductVariantFieldsProps<T extends ProductVariant | ProductVar
   colors: Color[];
   sizes: Size[];
 }
+
+export interface TempImagesPreviewProps {
+  tempImages: TempImage[]; 
+  onRemove?: (url: string) => void; 
+};

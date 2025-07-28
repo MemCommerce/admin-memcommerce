@@ -4,8 +4,10 @@ import { CHAT_URL } from "@/lib/urls";
 export const postChatMessage = async (message: MessageData, conversationId: string | null): Promise<ChatResponse> => {
   const postBody = {
     message: message.content,
-    conversation_id: conversationId
+    conversation_id: conversationId,
+    images_urls: message.imagesUrls
   };
+ 
   const resp = await fetch(CHAT_URL, {
     method: "POST",
     body: JSON.stringify(postBody),
