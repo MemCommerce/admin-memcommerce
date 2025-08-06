@@ -86,7 +86,8 @@ const CategoriesPage = () => {
 
   const openEditDialog = (category: Category) => {
     console.log(category)
-    setCurrentCategory(category)
+    setCurrentCategory(category);
+    setIsEditDialogOpen(true);
   };
 
   const handleDeleteCategory = async (id: string) => {
@@ -115,11 +116,17 @@ const CategoriesPage = () => {
       const newState = categories.map((c) =>
         c.id === updatedCategory.id ? updatedCategory : c
       );
+
       setCategories(newState);
       setIsEditDialogOpen(false);
-      setCategories(null);
+      setCurrentCategory(null);
+
     } catch (error) {
-      console.log(error.message);
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.log("An unknown error occurred.");
+      }
       
       toast("Something happened during editing of category!");
     }finally{
