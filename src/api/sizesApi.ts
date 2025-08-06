@@ -30,7 +30,7 @@ export const deleteSize = async (id: string) => {
 export const editSize = async (size: Size): Promise<Size> => {
   const url = `${SIZES_URL}${size.id}`;
   const resp = await fetch(url, {
-    method: "PUT", 
+    method: "PUT",
     body: JSON.stringify(size),
     headers: {
       "Content-Type": "application/json",

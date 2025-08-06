@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import type { Size, SizeData } from "@/lib/types";
-import { deleteSize, getSizes, postSize } from "@/api/sizesApi";
+import { deleteSize, editSize, getSizes, postSize } from "@/api/sizesApi";
 import { toast } from "sonner";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
 
@@ -66,19 +66,30 @@ export default function Sizes() {
     }
   };
 
-  const handleEditSize = (formData: FormData) => {
+  const handleEditSize = async (formData: FormData) => {
     if (!currentSize) return;
 
-    const updatedSize = {
+    const updatedData = {
       ...currentSize,
-      name: formData.get("name") as string,
-      category: formData.get("category") as string,
-      description: formData.get("description") as string,
+      label: formData.get("name") as string,
     };
 
-    setSizes(sizes.map((s) => (s.id === currentSize.id ? updatedSize : s)));
-    setIsEditDialogOpen(false);
-    setCurrentSize(null);
+    try {
+      const updatedSize = await editSize(updatedData);
+
+      setSizes((prev) => prev.map((s) => (s.id === updatedSize.id ? updatedSize : s)));
+
+      setIsEditDialogOpen(false);
+      setCurrentSize(null);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast(error.message);
+      } else {
+        toast("An unknown error occurred.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteSize = async (id: string) => {
