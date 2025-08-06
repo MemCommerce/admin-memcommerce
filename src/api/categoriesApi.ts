@@ -29,9 +29,21 @@ export const deleteCategory = async (id: string) => {
   }
 };
 
-export const editCategory = async (category: Category): Promise<Category> => {
 
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  console.log("Simulated category edit:", category);
-  return category;
+export const editCategory = async (category: Category): Promise<Category> => {
+  const url = `${CATEGORIES_URL}${category.id}`;
+  const resp = await fetch(url, {
+    method: "PUT", 
+    body: JSON.stringify(category),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!resp.ok) {
+    throw new Error("Failed to update category");
+  }
+
+  const data: Category = await resp.json();
+  return data;
 };
