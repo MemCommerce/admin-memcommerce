@@ -35,6 +35,7 @@ import {
   postCategory,
 } from "@/api/categoriesApi";
 import { toast } from "sonner";
+import { editCategory } from "@/api/categoriesApi";
 
 const defaultCategoryData: CategoryData = {
   name: "",
@@ -45,10 +46,12 @@ const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editCategory, setEditCategory] = useState<Category | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [newCategoryData, setNewCategoryData] =
     useState<CategoryData>(defaultCategoryData);
   const [isAdding, setIsAdding] = useState(false);
+  const [ loading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     (async () => {
@@ -83,7 +86,8 @@ const CategoriesPage = () => {
 
   const openEditDialog = (category: Category) => {
     console.log(category)
-    setEditCategory(category)
+    setCurrentCategory(category);
+    setIsEditDialogOpen(true);
   };
 
   const handleDeleteCategory = async (id: string) => {
@@ -96,7 +100,39 @@ const CategoriesPage = () => {
     }
   };
 
-  const handleEditCategory = () => {};
+  const handleEditCategoryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCurrentCategory((prev) => ({ ...prev!, [name]: value }));
+  };
+
+  const handleEditCategory = async (e: FormEvent) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+
+    try {
+      const updatedCategory = await editCategory(currentCategory!);
+
+      const newState = categories.map((c) =>
+        c.id === updatedCategory.id ? updatedCategory : c
+      );
+
+      setCategories(newState);
+      setIsEditDialogOpen(false);
+      setCurrentCategory(null);
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.log("An unknown error occurred.");
+      }
+      
+      toast("Something happened during editing of category!");
+    }finally{
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section className="space-y-6">
@@ -211,8 +247,8 @@ const CategoriesPage = () => {
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
-          {editCategory && (
-            <form action={handleEditCategory}>
+          {currentCategory && (
+            <form onSubmit={handleEditCategory}>
               <DialogHeader>
                 <DialogTitle>Edit Category</DialogTitle>
                 <DialogDescription>
@@ -226,7 +262,8 @@ const CategoriesPage = () => {
                     <Input
                       id="edit-name"
                       name="name"
-                      defaultValue={editCategory.name}
+                      value={currentCategory?.name} 
+                      onChange={handleEditCategoryChange}
                       required
                     />
                   </div>
@@ -236,7 +273,8 @@ const CategoriesPage = () => {
                   <Textarea
                     id="edit-description"
                     name="description"
-                    defaultValue={editCategory.description}
+                    value={currentCategory?.description}
+                    onChange={handleEditCategoryChange}
                   />
                 </div>
               </div>
@@ -248,7 +286,7 @@ const CategoriesPage = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit"  disabled={loading}>{loading ? "Saving..." : "Save Changes"}</Button>
               </DialogFooter>
             </form>
           )}

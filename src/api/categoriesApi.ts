@@ -28,3 +28,22 @@ export const deleteCategory = async (id: string) => {
     throw new Error();
   }
 };
+
+
+export const editCategory = async (category: Category): Promise<Category> => {
+  const url = `${CATEGORIES_URL}${category.id}`;
+  const resp = await fetch(url, {
+    method: "PUT", 
+    body: JSON.stringify(category),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!resp.ok) {
+    throw new Error("Failed to update category");
+  }
+
+  const data: Category = await resp.json();
+  return data;
+};
