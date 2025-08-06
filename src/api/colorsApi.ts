@@ -29,7 +29,7 @@ export const deleteColor = async (id: string) => {
   }
 };
 
-export const editSize = async (size: Color): Promise<Color> => {
+export const editColor = async (size: Color): Promise<Color> => {
   const url = `${COLORS_URL}${size.id}`;
   const resp = await fetch(url, {
     method: "PUT",
