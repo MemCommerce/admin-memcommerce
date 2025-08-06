@@ -21,7 +21,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import type { Color, ColorData } from "@/lib/types";
-import { deleteColor, getColors, postColor } from "@/api/colorsApi";
+import { deleteColor, editColor, getColors, postColor } from "@/api/colorsApi";
 import { toast } from "sonner";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
 
@@ -68,7 +68,7 @@ export default function Colors() {
     }
   };
 
-  const handleEditColor = (formData: FormData) => {
+  const handleEditColor = async (formData: FormData) => {
     if (!currentColor) return;
 
     const updatedColor = {
@@ -77,9 +77,17 @@ export default function Colors() {
       hex: formData.get("hex") as string,
     };
 
-    setColors(colors.map((c) => (c.id === currentColor.id ? updatedColor : c)));
-    setIsEditDialogOpen(false);
-    setCurrentColor(null);
+    try {
+      const savedColor = await editColor(updatedColor);
+
+      setColors((prev) => prev.map((c) => (c.id === savedColor.id ? savedColor : c)));
+
+      setIsEditDialogOpen(false);
+      setCurrentColor(null);
+    } catch (error) {
+      console.error("Failed to update color:", error);
+      toast("Failed to update color!");
+    }
   };
 
   const handleDeleteColor = async (id: string) => {
