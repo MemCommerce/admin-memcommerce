@@ -29,11 +29,11 @@ export const deleteColor = async (id: string) => {
   }
 };
 
-export const editColor = async (size: Color): Promise<Color> => {
-  const url = `${COLORS_URL}${size.id}`;
+export const editColor = async (color: Color): Promise<Color> => {
+  const url = `${COLORS_URL}${color.id}`;
   const resp = await fetch(url, {
     method: "PUT",
-    body: JSON.stringify(size),
+    body: JSON.stringify(color),
     headers: {
       "Content-Type": "application/json",
     },
