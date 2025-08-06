@@ -28,3 +28,10 @@ export const deleteCategory = async (id: string) => {
     throw new Error();
   }
 };
+
+export const editCategory = async (category: Category): Promise<Category> => {
+
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  console.log("Simulated category edit:", category);
+  return category;
+};
