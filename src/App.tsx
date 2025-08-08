@@ -9,6 +9,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import Sizes from "./pages/SizesPage";
 import ProductVariantPage from "./pages/ProductVariantsPage";
 import AiAdminPage from "./pages/AiAdminPage";
+import OrdersPage from "./pages/OrdersPage";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="products-variants" element={<ProductVariantPage />} />
           <Route path="colors" element={<Colors />} />
           <Route path="sizes" element={<Sizes />} />
+          <Route path="orders" element={<OrdersPage />} />
           <Route path="ai-admin" element={<AiAdminPage />} />
         </Routes>
         <Toaster />
