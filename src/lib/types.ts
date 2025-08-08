@@ -98,3 +98,28 @@ export type DescriptionReq = {
   secondary_keywords: string[];
   target_audience: string[];
 };
+
+
+// Orders
+export type LineItem = {
+  id: string;
+  name: string;
+  image_name: string;
+  price: number;
+  quantity: number;
+  order_id: string;
+  product_id: string;
+  product_variant_id: string;
+};
+
+export type Order = {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  address: string;
+  city: string;
+  country: string;
+  status: string;
+  line_items: LineItem[];
+};
