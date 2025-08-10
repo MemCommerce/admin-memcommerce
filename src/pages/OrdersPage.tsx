@@ -6,18 +6,29 @@ import { getOrders, markOrderAsDelivered } from "@/api/apiOrders";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<string | undefined>();
 
   useEffect(() => {
     (async () => {
-      const items = await getOrders();
-      setOrders(items);
+      try {
+        const data = await getOrders(page, limit, statusFilter);
+        setOrders(data.items);
+        setTotal(data.total);
+      } catch (err) {
+        console.error(err);
+      }
     })();
-  }, []);
+  }, [page, limit, statusFilter]);
+
+  const totalPages = Math.ceil(total / limit);
 
   const handleMarkAsDelivered = async (orderId: string) => {
     try {
       const updatedOrder = await markOrderAsDelivered(orderId);
-
       setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)));
     } catch (err) {
       console.error(err);
@@ -32,7 +43,25 @@ export default function OrdersPage() {
         <p className="text-muted-foreground">Track and manage your order history</p>
       </div>
 
-      {orders.map((order, index) => {
+      {/*filter */}
+      <div className="flex items-center gap-4">
+        <label>Status:</label>
+        <select
+          value={statusFilter || ""}
+          onChange={(e) => {
+            setPage(1);
+            setStatusFilter(e.target.value || undefined);
+          }}
+          className="border rounded px-2 py-1"
+        >
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="delivered">Delivered</option>
+        </select>
+      </div>
+
+      {/*render  orders  */}
+      {orders.map((order) => {
         const orderTotal = order.line_items.reduce((total, item) => total + item.price * item.quantity, 0);
 
         return (
@@ -73,15 +102,11 @@ export default function OrdersPage() {
 
                 {order.line_items.map((item) => (
                   <div key={item.id} className="flex justify-between items-center bg-gray-50 p-4 rounded-md shadow-sm">
-                    <div className="flex items-start">
-                      {/* Place for image TODO */}
-                      <div className="space-y-1">
-                        <div className="font-medium">{item.name}</div>
-                        <div className="text-sm text-muted-foreground">Quantity: {item.quantity}</div>
-                        <div className="text-sm text-muted-foreground">Price per unit: ${item.price.toFixed(2)}</div>
-                      </div>
+                    <div>
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-sm text-muted-foreground">Quantity: {item.quantity}</div>
+                      <div className="text-sm text-muted-foreground">Price per unit: ${item.price.toFixed(2)}</div>
                     </div>
-
                     <div className="text-right text-sm font-semibold text-gray-700">
                       ${(item.quantity * item.price).toFixed(2)}
                     </div>
@@ -92,6 +117,27 @@ export default function OrdersPage() {
           </Card>
         );
       })}
+
+      {/* pagination buttons */}
+      <div className="flex justify-between items-center mt-6">
+        <button
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {page} of {totalPages || 1}
+        </span>
+        <button
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages || totalPages === 0}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
