@@ -123,3 +123,8 @@ export type Order = {
   status: string;
   line_items: LineItem[];
 };
+
+export type OrdersResponse = {
+  items: Order[];
+  total: number;
+};

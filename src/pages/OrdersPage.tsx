@@ -2,22 +2,33 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import type { Order } from "@/lib/types";
-import { getOrders } from "@/api/apiOrders";
+import { getOrders, markOrderAsDelivered } from "@/api/apiOrders";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     (async () => {
-      const data = await getOrders();
-      setOrders(data);
+      const items = await getOrders();
+      setOrders(items);
     })();
   }, []);
+
+  const handleMarkAsDelivered = async (orderId: string) => {
+    try {
+      const updatedOrder = await markOrderAsDelivered(orderId);
+
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updatedOrder : o)));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update order status");
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Orders</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Manage Orders</h1>
         <p className="text-muted-foreground">Track and manage your order history</p>
       </div>
 
@@ -33,6 +44,14 @@ export default function OrdersPage() {
                   {order.status}
                 </Badge>
                 <div className="text-sm font-medium">Total: ${orderTotal.toFixed(2)}</div>
+                {order.status === "pending" && (
+                  <button
+                    className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                    onClick={() => handleMarkAsDelivered(order.id)}
+                  >
+                    Mark as Delivered
+                  </button>
+                )}
               </div>
             </div>
 
@@ -55,11 +74,7 @@ export default function OrdersPage() {
                 {order.line_items.map((item) => (
                   <div key={item.id} className="flex justify-between items-center bg-gray-50 p-4 rounded-md shadow-sm">
                     <div className="flex items-start">
-                      <img
-                        src={item.image_name ? `/uploads/${item.image_name}` : "/placeholder-image.png"}
-                        alt={item.name}
-                        className="w-16 h-16 object-cover rounded mr-4"
-                      />
+                      {/* Place for image TODO */}
                       <div className="space-y-1">
                         <div className="font-medium">{item.name}</div>
                         <div className="text-sm text-muted-foreground">Quantity: {item.quantity}</div>
