@@ -1,12 +1,11 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
 import type { Order } from "@/lib/types";
 import { getOrders, markOrderAsDelivered } from "@/api/apiOrders";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  // Pagination
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [total, setTotal] = useState(0);
