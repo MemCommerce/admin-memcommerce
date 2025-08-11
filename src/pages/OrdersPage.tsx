@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Order } from "@/lib/types";
 import { getOrders, markOrderAsDelivered } from "@/api/apiOrders";
+import Loader from "@/components/common/Loader";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -11,17 +12,28 @@ export default function OrdersPage() {
   const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       try {
         const data = await getOrders(page, limit, statusFilter);
         setOrders(data.items);
         setTotal(data.total);
+        setLoading(false);
       } catch (err) {
         console.error(err);
       }
     })();
   }, [page, limit, statusFilter]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const totalPages = Math.ceil(total / limit);
 

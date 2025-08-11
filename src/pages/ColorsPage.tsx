@@ -24,6 +24,7 @@ import type { Color, ColorData } from "@/lib/types";
 import { deleteColor, editColor, getColors, postColor } from "@/api/colorsApi";
 import { toast } from "sonner";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
+import Loader from "@/components/common/Loader";
 
 const defaultColorData: ColorData = {
   name: "",
@@ -39,12 +40,23 @@ export default function Colors() {
   const [newColorData, setNewColorData] = useState<ColorData>(defaultColorData);
   const [isAdding, setIsAdding] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       const data = await getColors();
       setColors(data);
+      setLoading(false);
     })();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

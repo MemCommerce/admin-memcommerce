@@ -23,6 +23,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { generateAiDescription } from "@/api/aiDescriptionApi";
+import Loader from "@/components/common/Loader";
 
 const defaultProduct: ProductData = {
   name: "",
@@ -35,7 +36,7 @@ const defaultAiParams = {
   primary_keyword: "",
   secondary_keywords: [] as string[],
   target_audience: [] as string[],
-}
+};
 
 export default function Products() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -47,12 +48,14 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState("");
   const [newProductData, setNewProductData] = useState<ProductData>(defaultProduct);
 
-    // AI generation states
-  const [showAiForm, setShowAiForm] = useState(false)
-  const [aiParams, setAiParams] = useState(defaultAiParams)
-  const [currentKeyword, setCurrentKeyword] = useState("")
-  const [currentAudience, setCurrentAudience] = useState("")
-    const [isAiGenerating, setIsAiGenerating] = useState(false)
+  // AI generation states
+  const [showAiForm, setShowAiForm] = useState(false);
+  const [aiParams, setAiParams] = useState(defaultAiParams);
+  const [currentKeyword, setCurrentKeyword] = useState("");
+  const [currentAudience, setCurrentAudience] = useState("");
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
+
+  const [loading, setLoading] = useState(true);
 
   const filteredProducts = products.filter(
     (product) =>
@@ -66,10 +69,19 @@ export default function Products() {
       const [getProductsData, getCategoriesData] = await Promise.all([getProducts(), getCategories()]);
       setProducts(getProductsData);
       setCategories(getCategoriesData);
+      setLoading(false);
     };
 
     loadData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const handleNewProductChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -106,10 +118,10 @@ export default function Products() {
       const updatedProduct = await editProduct(currentProduct!);
       const newProductsState = products.map((p) => {
         if (p.id === updatedProduct.id) {
-          return updatedProduct
+          return updatedProduct;
         }
-        return p
-      })
+        return p;
+      });
       setProducts(newProductsState);
       setIsEditDialogOpen(false);
       setCurrentProduct(null);
@@ -136,21 +148,21 @@ export default function Products() {
 
   const handleAiGen = () => {
     if (!newProductData.name || !newProductData.brand || !newProductData.category_id) {
-      toast.error("Please fill in Name, Brand, and Category before generating AI description")
-      return
+      toast.error("Please fill in Name, Brand, and Category before generating AI description");
+      return;
     }
-    setShowAiForm(true)
-  }
+    setShowAiForm(true);
+  };
 
   const handleGenerateDescription = async () => {
     if (!aiParams.primary_keyword) {
-      toast.error("Please provide a primary keyword")
-      return
+      toast.error("Please provide a primary keyword");
+      return;
     }
 
-    setIsAiGenerating(true)
+    setIsAiGenerating(true);
     try {
-      const selectedCategory = categories.find((c) => c.id === newProductData.category_id)
+      const selectedCategory = categories.find((c) => c.id === newProductData.category_id);
       const descriptionReq: DescriptionReq = {
         name: newProductData.name,
         brand: newProductData.brand,
@@ -158,62 +170,60 @@ export default function Products() {
         primary_keyword: aiParams.primary_keyword,
         secondary_keywords: aiParams.secondary_keywords,
         target_audience: aiParams.target_audience,
-      }
+      };
 
-      const generatedDescription = await generateAiDescription(descriptionReq)
-      console.log(generatedDescription)
-      setNewProductData((prev) => ({ ...prev, description: generatedDescription }))
-      setShowAiForm(false)
-      toast.success("AI description generated successfully!")
+      const generatedDescription = await generateAiDescription(descriptionReq);
+      console.log(generatedDescription);
+      setNewProductData((prev) => ({ ...prev, description: generatedDescription }));
+      setShowAiForm(false);
+      toast.success("AI description generated successfully!");
     } catch {
-      toast.error("Failed to generate AI description")
+      toast.error("Failed to generate AI description");
     } finally {
-      setIsAiGenerating(false)
+      setIsAiGenerating(false);
     }
-  }
+  };
 
   const addKeyword = () => {
     if (currentKeyword.trim() && !aiParams.secondary_keywords.includes(currentKeyword.trim())) {
       setAiParams((prev) => ({
         ...prev,
         secondary_keywords: [...prev.secondary_keywords, currentKeyword.trim()],
-      }))
-      setCurrentKeyword("")
+      }));
+      setCurrentKeyword("");
     }
-  }
+  };
 
   const removeKeyword = (keyword: string) => {
     setAiParams((prev) => ({
       ...prev,
       secondary_keywords: prev.secondary_keywords.filter((k) => k !== keyword),
-    }))
-  }
+    }));
+  };
 
   const addAudience = () => {
     if (currentAudience.trim() && !aiParams.target_audience.includes(currentAudience.trim())) {
       setAiParams((prev) => ({
         ...prev,
         target_audience: [...prev.target_audience, currentAudience.trim()],
-      }))
-      setCurrentAudience("")
+      }));
+      setCurrentAudience("");
     }
-  }
+  };
 
   const removeAudience = (audience: string) => {
     setAiParams((prev) => ({
       ...prev,
       target_audience: prev.target_audience.filter((a) => a !== audience),
-    }))
-  }
+    }));
+  };
 
   const resetAiForm = () => {
-    setShowAiForm(false)
-    setAiParams(defaultAiParams)
-    setCurrentKeyword("")
-    setCurrentAudience("")
-  }
-
-
+    setShowAiForm(false);
+    setAiParams(defaultAiParams);
+    setCurrentKeyword("");
+    setCurrentAudience("");
+  };
 
   return (
     <div className="space-y-6">
