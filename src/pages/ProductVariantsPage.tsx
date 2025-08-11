@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
 import DialogComponent from "@/components/DialogComponent";
 import ProductVariantFields from "@/components/forms/ProductVariantFields";
+import Loader from "@/components/common/Loader";
 
 const deafaultPvData: ProductVariantData = {
   product_id: "",
@@ -38,6 +39,8 @@ const ProductVariantPage = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editProductVariant, setEdintProductVariant] = useState<ProductVariant | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const loadData = async () => {
       const [productsData, sizesData, colorsData, pvsData] = await Promise.all([
@@ -52,7 +55,16 @@ const ProductVariantPage = () => {
       setProductVariants(pvsData);
     };
     loadData();
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const handleAddPV = async (e: FormEvent) => {
     e.preventDefault();
@@ -72,10 +84,10 @@ const ProductVariantPage = () => {
 
   const handleDeletePv = async (id: string) => {
     try {
-      await deletePv(id)
-      setProductVariants(productVariants.filter((pv) => pv.id !== id))
+      await deletePv(id);
+      setProductVariants(productVariants.filter((pv) => pv.id !== id));
     } catch {
-      toast("Error during delete of product variant!")
+      toast("Error during delete of product variant!");
     }
   };
 

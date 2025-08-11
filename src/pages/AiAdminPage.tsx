@@ -32,13 +32,13 @@ const AiAdminPage = () => {
       id: uuidv4(),
     };
     if (tempImages.length > 0) {
-      console.log("Enter here")
-      userMessage.imagesUrls = tempImages.map((ti) => ti.url)
+      console.log("Enter here");
+      userMessage.imagesUrls = tempImages.map((ti) => ti.url);
     }
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
     setInput("");
-    setTempImages([])
+    setTempImages([]);
     const chatResponse = await postChatMessage(userMessage, conversationId);
     if (!conversationId) {
       setConversationId(chatResponse.conversation_id);
@@ -71,9 +71,7 @@ const AiAdminPage = () => {
         )
       );
 
-      const postData: TempImageData[] = base64Images.map((bi) => (
-        {base64_data: bi}
-      ))
+      const postData: TempImageData[] = base64Images.map((bi) => ({ base64_data: bi }));
       const newImageUrls = await postImages(postData);
 
       setTempImages((prev) => [...prev, ...newImageUrls]);
@@ -128,11 +126,7 @@ const AiAdminPage = () => {
                         <div className="flex flex-wrap gap-2 pt-2">
                           {message.imagesUrls.map((imgUrl: string, index: number) => (
                             <div key={index} className="rounded-md overflow-hidden border w-24 h-24">
-                              <img
-                                src={imgUrl}
-                                alt={`image-${index}`}
-                                className="object-cover w-full h-full"
-                              />
+                              <img src={imgUrl} alt={`image-${index}`} className="object-cover w-full h-full" />
                             </div>
                           ))}
                         </div>

@@ -18,24 +18,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, CategoryData } from "@/lib/types";
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react";
-import {
-  deleteCategory,
-  getCategories,
-  postCategory,
-} from "@/api/categoriesApi";
+import { deleteCategory, getCategories, postCategory } from "@/api/categoriesApi";
 import { toast } from "sonner";
 import { editCategory } from "@/api/categoriesApi";
+import Loader from "@/components/common/Loader";
 
 const defaultCategoryData: CategoryData = {
   name: "",
@@ -47,22 +37,29 @@ const CategoriesPage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
-  const [newCategoryData, setNewCategoryData] =
-    useState<CategoryData>(defaultCategoryData);
+  const [newCategoryData, setNewCategoryData] = useState<CategoryData>(defaultCategoryData);
   const [isAdding, setIsAdding] = useState(false);
-  const [ loading, setIsLoading] = useState(false);
+  const [loading, setIsLoading] = useState(false);
 
+  const [loadingSpiner, setloadingSpiner] = useState(true);
 
   useEffect(() => {
     (async () => {
       const data = await getCategories();
       setCategories(data);
+      setloadingSpiner(false);
     })();
   }, []);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  if (loadingSpiner) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setNewCategoryData((prev) => ({ ...prev, [name]: value }));
   };
@@ -85,7 +82,7 @@ const CategoriesPage = () => {
   };
 
   const openEditDialog = (category: Category) => {
-    console.log(category)
+    console.log(category);
     setCurrentCategory(category);
     setIsEditDialogOpen(true);
   };
@@ -113,23 +110,20 @@ const CategoriesPage = () => {
     try {
       const updatedCategory = await editCategory(currentCategory!);
 
-      const newState = categories.map((c) =>
-        c.id === updatedCategory.id ? updatedCategory : c
-      );
+      const newState = categories.map((c) => (c.id === updatedCategory.id ? updatedCategory : c));
 
       setCategories(newState);
       setIsEditDialogOpen(false);
       setCurrentCategory(null);
-
     } catch (error) {
       if (error instanceof Error) {
         console.log(error.message);
       } else {
         console.log("An unknown error occurred.");
       }
-      
+
       toast("Something happened during editing of category!");
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -152,21 +146,13 @@ const CategoriesPage = () => {
             <form onSubmit={handleAddCategory}>
               <DialogHeader>
                 <DialogTitle>Add New Category</DialogTitle>
-                <DialogDescription>
-                  Add a new product category.
-                </DialogDescription>
+                <DialogDescription>Add a new product category.</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Category Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={newCategoryData.name}
-                      onChange={handleInputChange}
-                      required
-                    />
+                    <Input id="name" name="name" value={newCategoryData.name} onChange={handleInputChange} required />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -180,12 +166,7 @@ const CategoriesPage = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsAddDialogOpen(false)}
-                  disabled={isAdding}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={isAdding}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isAdding}>
@@ -207,11 +188,7 @@ const CategoriesPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <NoEntitiesWrapper
-              entities={categories}
-              entitiesName="categories"
-              colSpan={3}
-            >
+            <NoEntitiesWrapper entities={categories} entitiesName="categories" colSpan={3}>
               {categories.map((c) => (
                 <TableRow key={c.id}>
                   <TableCell>{c.name}</TableCell>
@@ -229,9 +206,7 @@ const CategoriesPage = () => {
                           <Pencil className="mr-2 h-4 w-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDeleteCategory(c.id)}
-                        >
+                        <DropdownMenuItem onClick={() => handleDeleteCategory(c.id)}>
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>
@@ -251,9 +226,7 @@ const CategoriesPage = () => {
             <form onSubmit={handleEditCategory}>
               <DialogHeader>
                 <DialogTitle>Edit Category</DialogTitle>
-                <DialogDescription>
-                  Update the category details.
-                </DialogDescription>
+                <DialogDescription>Update the category details.</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -262,7 +235,7 @@ const CategoriesPage = () => {
                     <Input
                       id="edit-name"
                       name="name"
-                      value={currentCategory?.name} 
+                      value={currentCategory?.name}
                       onChange={handleEditCategoryChange}
                       required
                     />
@@ -279,14 +252,12 @@ const CategoriesPage = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsEditDialogOpen(false)}
-                >
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit"  disabled={loading}>{loading ? "Saving..." : "Save Changes"}</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? "Saving..." : "Save Changes"}
+                </Button>
               </DialogFooter>
             </form>
           )}

@@ -23,6 +23,7 @@ import type { Size, SizeData } from "@/lib/types";
 import { deleteSize, editSize, getSizes, postSize } from "@/api/sizesApi";
 import { toast } from "sonner";
 import NoEntitiesWrapper from "@/components/common/NoEntitiesWrapper";
+import Loader from "@/components/common/Loader";
 
 const defaultSize: SizeData = {
   label: "",
@@ -38,12 +39,24 @@ export default function Sizes() {
   const [isLoading, setIsLoading] = useState(false);
   const [newSizeData, setNewSizeData] = useState<SizeData>(defaultSize);
 
+  //Loader
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       const data = await getSizes();
       setSizes(data);
+      setLoading(false);
     })();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
