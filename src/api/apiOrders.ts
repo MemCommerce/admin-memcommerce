@@ -24,7 +24,7 @@ export const getOrders = async (page: number = 1, limit: number = 10, status?: s
 };
 
 export const markOrderAsDelivered = async (orderId: string): Promise<Order> => {
-  const resp = await fetch(`${ORDERS_URL}/${orderId}delivered`, {
+  const resp = await fetch(`${ORDERS_URL}${orderId}/delivered`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
