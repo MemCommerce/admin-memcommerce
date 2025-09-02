@@ -1,10 +1,28 @@
-import { useState } from "react"
-import { Link, useLocation } from "react-router"
-import { Menu, Bell, X, LayoutDashboard, Package, Palette, Ruler, ShoppingCart, ListFilter, FolderTree, BotIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Link, useLocation } from "react-router";
+import {
+  Menu,
+  Bell,
+  X,
+  LayoutDashboard,
+  Package,
+  Palette,
+  Ruler,
+  ShoppingCart,
+  ListFilter,
+  FolderTree,
+  BotIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./common/ThemeToggle";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -15,11 +33,11 @@ const navigation = [
   { name: "Sizes", href: "/sizes", icon: Ruler },
   { name: "Orders", href: "/orders", icon: ShoppingCart },
   { name: "AI Admin", href: "/ai-admin", icon: BotIcon },
-]
+];
 
 export default function Header() {
-  const location = useLocation()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <header className="border-b bg-white dark:bg-gray-800">
@@ -41,7 +59,7 @@ export default function Header() {
                   "flex items-center px-3 py-2 text-sm font-medium",
                   location.pathname === item.href
                     ? "text-gray-900 dark:text-white"
-                    : "text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white",
+                    : "text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                 )}
               >
                 <item.icon className="mr-2 h-5 w-5" />
@@ -54,6 +72,8 @@ export default function Header() {
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
+
+            <ThemeToggle />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -98,7 +118,7 @@ export default function Header() {
                   "flex items-center rounded-md px-3 py-2 text-base font-medium",
                   location.pathname === item.href
                     ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-white"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -110,5 +130,5 @@ export default function Header() {
         </div>
       )}
     </header>
-  )
+  );
 }
